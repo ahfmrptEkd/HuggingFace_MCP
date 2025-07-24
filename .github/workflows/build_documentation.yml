@@ -12,7 +12,7 @@ jobs:
       commit_sha: ${{ github.sha }}
       package: mcp-course
       package_name: mcp-course
-      path_to_docs: src/unit3/mcp-course/units/
+      path_to_docs: ./src/unit3/mcp-course/units/
       additional_args: --not_python_module
       languages: en
     secrets:
