@@ -625,6 +625,7 @@ source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
     { name = "mcp", extra = ["cli"] },
+    { name = "py-dotenv" },
     { name = "requests" },
 ]
 
@@ -644,6 +645,7 @@ dev = [
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.10.0,<4.0.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.0.0" },
+    { name = "py-dotenv", specifier = ">=0.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.21.0" },
     { name = "requests", specifier = ">=2.32.0,<3.0.0" },
@@ -743,6 +745,14 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/9a/4c/b0fe775a2bdd01e176b14b574be679d84fc83958335790f7c9a686c1f468/propcache-0.3.2-cp313-cp313t-win32.whl", hash = "sha256:f86e5d7cd03afb3a1db8e9f9f6eff15794e79e791350ac48a8c924e6f439f394", size = 41175, upload_time = "2025-06-09T22:55:38.436Z" },
     { url = "https://files.pythonhosted.org/packages/a4/ff/47f08595e3d9b5e149c150f88d9714574f1a7cbd89fe2817158a952674bf/propcache-0.3.2-cp313-cp313t-win_amd64.whl", hash = "sha256:9704bedf6e7cbe3c65eca4379a9b53ee6a83749f047808cbb5044d40d7d72198", size = 44857, upload_time = "2025-06-09T22:55:39.687Z" },
     { url = "https://files.pythonhosted.org/packages/cc/35/cc0aaecf278bb4575b8555f2b137de5ab821595ddae9da9d3cd1da4072c7/propcache-0.3.2-py3-none-any.whl", hash = "sha256:98f1ec44fb675f5052cccc8e609c46ed23a35a1cfd18545ad4e29002d858a43f", size = 12663, upload_time = "2025-06-09T22:56:04.484Z" },
+]
+
+[[package]]
+name = "py-dotenv"
+version = "0.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5e/3a/32e68bcdf9419611af95be030bb724c1a40f72bc9b62be28b9c1a08217b2/py_dotenv-0.1-py3-none-any.whl", hash = "sha256:548c588c3b7e2ee2142b0ac97d2912d223ff38e874302426bbb6c21353817cc2", size = 3634, upload_time = "2016-12-13T03:32:02.244Z" },
 ]
 
 [[package]]
