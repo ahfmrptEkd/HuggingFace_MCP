@@ -7,10 +7,14 @@ Combines all MCP primitives (Tools and Prompts) for complete team communication 
 import json
 import os
 import subprocess
+import requests
 from typing import Optional
 from pathlib import Path
+from dotenv import load_dotenv
 
 from mcp.server.fastmcp import FastMCP
+
+load_dotenv()
 
 # Initialize the FastMCP server
 mcp = FastMCP("pr-agent-slack")
@@ -251,16 +255,30 @@ async def send_slack_notification(message: str) -> str:
         return "Error: SLACK_WEBHOOK_URL environment variable not set"
     
     try:
-        # TODO: Import requests library
-        # TODO: Send POST request to webhook_url with JSON payload
-        # TODO: Include the message in the JSON data
-        # TODO: Handle the response and return appropriate status
-        
-        # For now, return a placeholder
-        return f"TODO: Implement Slack webhook POST request for message: {message[:50]}..."
-        
+        # prepare payload with slack formatting
+        payload = {
+            "text": message,
+            "markdown": True
+        }
+
+        # Send POST request to webhook_url with JSON payload
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            timeout=10
+        )
+
+        # Check if request was successful
+        if response.status_code == 200:
+            return "✅ Message sent successfully to Slack"
+        else:
+            return f"❌ Failed to send message. Status: {response.status_code}, Response: {response.text}"
+    except requests.exceptions.Timeout:
+        return "❌ Request timed out. Check your internet connection and try again."
+    except requests.exceptions.ConnectionError:
+        return "❌ Connection error. Check your internet connection and webhook URL."
     except Exception as e:
-        return f"Error sending message: {str(e)}"
+        return f"❌ Error sending message: {str(e)}"
 
 
 # ===== New Module 3: Slack Formatting Prompts =====
