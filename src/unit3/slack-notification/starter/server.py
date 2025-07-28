@@ -258,7 +258,7 @@ async def send_slack_notification(message: str) -> str:
         # prepare payload with slack formatting
         payload = {
             "text": message,
-            "markdown": True
+            "mrkdwn": True
         }
 
         # Send POST request to webhook_url with JSON payload
