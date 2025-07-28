@@ -271,7 +271,7 @@ uv run pytest test_server.py::test_analyze_file_changes -v
 - Claude Code와의 통합 패턴
 
 #### 단계 3: 실무 통합 패턴 (Unit 3 모듈 2)
-- GitHub Actions와의 연동 방법
+- GitHub Actions와의 연동 방법 (<u>*임시 url 매번 github에서 변경 필요*</u>)
 - 웹훅 처리 및 이벤트 기반 아키텍처
 - CI/CD 자동화 워크플로우 구축
 
