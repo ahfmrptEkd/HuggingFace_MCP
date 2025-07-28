@@ -47,9 +47,3 @@ Note: The webhook server (`webhook_server.py`) is provided for you!
 - Read the JSON file in your tools to get event data
 - Prompts are simple functions that return strings with instructions
 - Decorate prompt functions with `@mcp.prompt()`
-
-## Need Help?
-
-- Review the Module 2 documentation
-- Check the solution in the `solution/` directory
-- Look at the MCP documentation for Prompts: https://modelcontextprotocol.io/docs/concepts/prompts

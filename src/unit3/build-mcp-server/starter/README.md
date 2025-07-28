@@ -60,8 +60,3 @@ Instead of using rigid rules based on file extensions or patterns, your tools sh
    ```
 
 3. Make some changes in a git repository and ask Claude to analyze your changes and suggest a PR template
-
-## Need Help?
-
-- Check the solution in `../solution/` if you get stuck
-- Remember: The goal is to give Claude the data it needs, not to implement complex logic yourself
