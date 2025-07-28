@@ -70,6 +70,7 @@ HuggingFace_MCP/
 │       │   └── pr-guidelines.md       # PR 작성 가이드라인
 │       ├── templates/                 # PR 템플릿 모음
 │       └── pyproject.toml            # 프로젝트 의존성 관리
+│       └── README.md                 # 프로젝트 설명
 │
 └── README.md                
 ```
