@@ -22,6 +22,9 @@ mcp = FastMCP("pr-agent-slack")
 # PR template directory (shared between starter and solution)
 TEMPLATES_DIR = Path(__file__).parent.parent.parent / "templates"
 
+# PR team guidelines
+TEAM_GUIDELINES_DIR = Path(__file__).parent.parent.parent / "team_guidelines/pr_guidelines.md"
+
 # Default PR templates
 DEFAULT_TEMPLATES = {
     "bug.md": "Bug Fix",
@@ -173,6 +176,40 @@ async def suggest_template(changes_summary: str, change_type: str) -> str:
     }
     
     return json.dumps(suggestion, indent=2)
+
+
+@mcp.tool()
+async def get_pr_guidelines() -> str:
+    """
+    Returns the team's PR guidelines as a structured JSON object.
+    This serves as a central resource for PR-related rules.
+    """
+    guidelines = {
+        "title_format": {
+            "template": "{type}:({scope}): {description}",
+            "conventional_commit_types": ["feat", "fix", "docs", "style", "refactor", "test", "chore"],
+            "examples": [
+                "feat(auth): Add OAuth2 support",
+                "fix(api): Handle null values in user input",
+                "docs: Update installation guide"
+            ]
+        },
+        "size": {
+            "max_lines": 500,
+            "recommendation": "Keep PRs under 500 lines of changes. Split large features."
+        },
+        "description": {
+            "requirements": [
+                "Clearly explain what and why",
+                "Include screenshots for UI changes",
+                "List any breaking changes",
+                "Add testing instructions",
+                "Reference related issues/tickets"
+            ]
+        }
+    }
+
+    return json.dumps(guidelines, indent=2)
 
 
 @mcp.tool()
@@ -469,6 +506,29 @@ Structure your response as:
 ### 📚 Resources
 - [Relevant documentation links]
 - [Similar issues or solutions]"""
+
+
+@mcp.prompt()
+async def generate_pr_suggestion():
+    """
+    Analyze code changes and generate a full PR suggestion.
+    including a title that follows the team's PR guidelines.
+
+    Process:
+    1. Call 'analyze_file_changes()' to understand the code changes
+    2. Call 'get_pr_guidelines()' to load the team's PR guidelines
+    3. Based on the changes and guidelines, determine the PR type (e.g., 'feat', 'fix').
+    4. Construct a conventional commit PR title.
+    5. Call 'suggest_template()' to get the appropriate PR template content.
+    6. Combine everything into a final, helpful suggestion for the user.
+    """
+    return """
+    Based on the user's code changes, generate a complete PR suggestion.
+    You MUST use the 'get_pr_guidelines()' tool to ensure the title follows the team's conventional commit format.
+    You MUST also use 'analyze_file_changes()' to understand the context and 'suggest_template()' to get body.
+
+    Output the final suggestion as a Markdown string.
+    """
 
 
 if __name__ == "__main__":
