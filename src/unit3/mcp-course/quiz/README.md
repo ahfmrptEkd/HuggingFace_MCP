@@ -1,1 +1,0 @@
-# MCP Course quiz scripts
