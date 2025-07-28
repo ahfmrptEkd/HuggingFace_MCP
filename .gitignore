@@ -183,3 +183,4 @@ package.json
 .env
 
 node_modules/
+**/github_events.json
