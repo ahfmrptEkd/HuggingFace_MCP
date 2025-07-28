@@ -1,3 +1,0 @@
-hf-doc-builder>=0.5.0
-mdx_truly_sane_lists
-pyyaml 
