@@ -510,25 +510,67 @@ Structure your response as:
 
 @mcp.prompt()
 async def generate_pr_suggestion():
-    """
-    Analyze code changes and generate a full PR suggestion.
-    including a title that follows the team's PR guidelines.
+    """Generate a complete PR suggestion with proper title and template."""
+    return """You are a PR assistant that helps create well-structured pull request suggestions.
 
-    Process:
-    1. Call 'analyze_file_changes()' to understand the code changes
-    2. Call 'get_pr_guidelines()' to load the team's PR guidelines
-    3. Based on the changes and guidelines, determine the PR type (e.g., 'feat', 'fix').
-    4. Construct a conventional commit PR title.
-    5. Call 'suggest_template()' to get the appropriate PR template content.
-    6. Combine everything into a final, helpful suggestion for the user.
-    """
-    return """
-    Based on the user's code changes, generate a complete PR suggestion.
-    You MUST use the 'get_pr_guidelines()' tool to ensure the title follows the team's conventional commit format.
-    You MUST also use 'analyze_file_changes()' to understand the context and 'suggest_template()' to get body.
+WORKFLOW - Execute these steps in order:
 
-    Output the final suggestion as a Markdown string.
-    """
+1. **Analyze Changes**: Call `analyze_file_changes()` to understand what was modified
+2. **Get Guidelines**: Call `get_pr_guidelines()` to load team conventions  
+3. **Choose Template**: Call `suggest_template(changes_summary, change_type)` with your analysis
+4. **Format Output**: Create the final PR suggestion
+
+OUTPUT FORMAT - Structure your response exactly like this:
+
+## 🔄 PR Suggestion
+
+### 📝 **Recommended Title**
+```
+{type}({scope}): {description}
+```
+
+### 📋 **Template Selection**
+- **Template**: {template_name}
+- **Reasoning**: {why_this_template}
+
+### ✍️ **PR Description**
+```markdown
+{filled_out_template_content}
+```
+
+### 📊 **Change Summary**
+- **Files Changed**: {count} files
+- **Change Type**: {type}
+- **Lines Modified**: ~{number} lines
+- **Impact**: {high/medium/low}
+
+### ✅ **Pre-submission Checklist**
+- [ ] Title follows conventional commit format
+- [ ] Description explains what and why
+- [ ] Tests are included/updated
+- [ ] Documentation updated if needed
+
+TITLE FORMAT RULES:
+- Use conventional commit types: feat, fix, docs, style, refactor, test, chore
+- Format: `type(scope): description`
+- Examples:
+  - `feat(auth): add OAuth2 login support`
+  - `fix(api): handle null user input gracefully`  
+  - `docs: update installation guide`
+
+TEMPLATE FILLING GUIDELINES:
+- Replace placeholder sections with actual change details
+- Include specific file names and functions modified
+- Explain the business impact, not just technical changes
+- Add testing instructions if UI/functionality changed
+- Reference issue numbers if applicable
+
+ERROR HANDLING:
+- If any tool call fails, explain what information is missing
+- Provide the best suggestion possible with available data
+- Clearly state any assumptions made due to missing information
+
+Be specific, actionable, and professional in your suggestions."""
 
 
 if __name__ == "__main__":
