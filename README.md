@@ -1,293 +1,247 @@
-# HuggingFace MCP 학습 프로젝트 (Unit 2 ~ 3)
+# 🤖 HuggingFace MCP 학습 및 실무 워크플로우 구축 프로젝트
 
-Model Context Protocol (MCP)를 활용한 실무 개발 프로젝트 모음입니다. 이 프로젝트는 **HuggingFace의 공식 MCP 과정**을 기반으로 하여 MCP의 기본 개념부터 실제 적용까지 단계적으로 학습할 수 있도록 구성되었습니다.
+> HuggingFace MCP 공식 과정을 기반으로 MCP 서버/클라이언트 구현부터 GitHub Actions 및 Slack을 연동한 실무 PR 자동화 워크플로우 구축까지
 
 ![MCP Course Banner](https://github.com/user-attachments/assets/d26dcc5e-46cb-449e-aecb-49ece10d342a)
 
-## 📚 프로젝트 개요
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
+![MCP](https://img.shields.io/badge/MCP-server--python-green.svg)
+![Gradio](https://img.shields.io/badge/gradio-latest-orange.svg)
 
-이 저장소는 MCP(Model Context Protocol)의 기본 개념부터 실무 적용까지 체계적으로 학습할 수 있는 완전한 교육 프로젝트입니다:
+*본 프로젝트는 HuggingFace MCP 공식 과정을 기반으로 합니다.*
 
-### 📖 이론 학습 (docs/)
-- **Unit 1**: MCP 기본 개념, 통합 문제, 핵심 용어 이해
-- **Unit 2**: Gradio 자원을 활용한 MCP 서버/클라이언트 구현 이론
-- **Unit 3**: Claude Code 연동 및 실무 워크플로우 구축 가이드
+---
+<br>
 
-### 🛠️ 실습 프로젝트 (src/)
+## 🎯 프로젝트 개요: 30초 요약 (STAR)
 
-#### Unit 2: 기본 MCP 구현
-- **mcp-server**: TextBlob 기반 감정 분석 Gradio 서버
-- **mcp-client**: HuggingFace.js 기반 MCP 클라이언트
-- **mcp-tiny_agent**: SmolAgents 기반 통합 에이전트
+* **S (Situation / 문제)**
+  
+  AI 모델과 외부 도구/데이터 소스를 연동하는 것은 M x N 통합 문제로 인해 복잡하고 비효율적입니다. 개발자는 AI 모델이 git 변경사항 분석, CI/CD 상태 모니터링, 팀 알림 발송 등 실제 개발 워크플로우와 원활하게 상호작용할 수 있는 표준화된 방법이 필요했습니다.
 
-#### Unit 3: 실무 워크플로우 구축  
-- **모듈 1**: 기본 MCP 서버 구축 - PR 분석 및 템플릿 제안
-- **모듈 2**: GitHub Actions 통합 - 웹훅 처리 및 CI/CD 자동화  
-- **모듈 3**: Slack 알림 시스템 - 팀 커뮤니케이션 워크플로우
+* **T (Task / 목표)**
+  
+  HuggingFace의 MCP(Model Context Protocol) 과정을 통해 MCP의 기본 개념을 학습하고, 이를 실제 개발 워크플로우에 적용하는 **PR 에이전트(PR Agent)**를 구축하는 것이 목표였습니다. 구체적으로는 **PR 템플릿 추천**, **GitHub Actions 모니터링**, **Slack 알림 자동화** 기능을 구현하고자 했습니다.
 
-## 🏗️ 프로젝트 구조
+* **A (Action / 해결)**
 
-```
-HuggingFace_MCP/
-├── docs/                      # 📖 학습 문서
-│   ├── Unit1.md              # MCP 기본 개념 및 이론
-│   ├── Unit2.md              # Gradio 기반 구현 가이드 
-│   ├── Unit3.md              # Claude Code 워크플로우 
-│   └── imgs/                 # 문서용 이미지 자료
-│
-├── src/
-│   ├── unit2/                # 🛠️ 기본 MCP 구현
-│   │   ├── mcp-server/       # Gradio 감정 분석 서버
-│   │   │   ├── app.py        # TextBlob 기반 서버
-│   │   │   └── requirements.txt
-│   │   ├── mcp-client/       # HuggingFace.js 클라이언트
-│   │   │   ├── app.py        # Gradio 인터페이스
-│   │   │   └── requirements.txt
-│   │   └── mcp-tiny_agent/   # SmolAgents 통합 에이전트
-│   │       ├── agent.json    # 에이전트 설정
-│   │       └── README.md
-│   │
-│   └── unit3/                # 🚀 실무 워크플로우 구축
-│       ├── build-mcp-server/          # 모듈 1 - 기본 MCP 서버
-│       │   └── starter/
-│       │       ├── server.py          # PR 분석 및 템플릿 제안 도구
-│       │       ├── test_server.py     # 단위 테스트
-│       │       └── README.md
-│       ├── github-actions-integration/ # 모듈 2 - GitHub Actions 통합
-│       │   └── starter/
-│       │       ├── server.py          # GitHub 웹훅 처리 도구
-│       │       ├── webhook_server.py  # 웹훅 서버
-│       │       ├── test_server.py     # 통합 테스트
-│       │       └── README.md
-│       ├── slack-notification/        # 모듈 3 - Slack 알림 시스템
-│       │   └── starter/
-│       │       ├── server.py          # Slack 알림 발송 도구
-│       │       ├── webhook_server.py  # 웹훅 서버
-│       │       ├── test_server.py     # 종단간 테스트
-│       │       └── README.md
-│       ├── team-guidelines/           # 팀 개발 가이드라인
-│       │   ├── coding-standards.md    # 코딩 표준
-│       │   └── pr-guidelines.md       # PR 작성 가이드라인
-│       ├── templates/                 # PR 템플릿 모음
-│       └── pyproject.toml            # 프로젝트 의존성 관리
-│       └── README.md                 # 프로젝트 설명
-│
-└── README.md                
-```
+  1. **Unit 2 (기본 구현)**: Gradio를 활용하여 TextBlob 기반 감정 분석 MCP 서버와 HuggingFace.js/SmolAgents 클라이언트를 구현하고 Hugging Face Spaces에 배포했습니다.
 
-## 🚀 주요 기능
+  2. **Unit 3 (실무 워크플로우)**: `FastMCP`를 사용하여 PR 에이전트 서버를 구축했습니다.
+     * **Module 1**: `git diff` 분석 및 PR 템플릿 추천 도구 (`analyze_file_changes`, `get_pr_templates`, `suggest_template`) 구현.
+     * **Module 2**: GitHub Actions 웹훅을 처리하고(`webhook_server.py`), CI/CD 상태를 모니터링하는 도구(`get_recent_actions_events`, `get_workflow_status`) 및 관련 프롬프트(`analyze_ci_results` 등) 구현. Cloudflare Tunnel을 이용한 로컬 테스트 환경 구축.
+     * **Module 3**: CI/CD 결과를 Slack으로 자동 알림하는 도구(`send_slack_notification`) 및 서식 프롬프트(`format_ci_failure_alert` 등) 구현.
 
-### Unit 2: 기본 MCP 구현
-- **감정 분석 서버**: TextBlob 기반 Gradio MCP 서버 구축
-- **다중 클라이언트 지원**: HuggingFace.js와 SmolAgents 연동
-- **Hugging Face Spaces 배포**: 원격 MCP 서버 배포 및 연결
-- **크로스 플랫폼 통합**: 다양한 클라이언트에서 동일한 서버 활용
+* **R (Result / 결과)**
+  
+  * **핵심 산출물**: Git 변경사항 분석, GitHub Actions 모니터링, Slack 알림 기능을 갖춘 **완전한 PR 에이전트 MCP 서버**를 성공적으로 구축했습니다.
+  * **기술적 성과**: MCP의 핵심 요소인 **Tools**와 **Prompts**를 모두 활용하여 복잡한 개발 워크플로우를 자동화하는 시스템을 구현했습니다. `uv`를 통한 효율적인 패키지 관리 및 `pytest`를 활용한 테스트 코드를 작성했습니다.
 
-### Unit 3: 실무 워크플로우 구축
+---
+<br>
 
-#### 모듈 1: 기본 MCP 서버
-- **파일 변경사항 분석**: Git diff 정보를 통한 코드 변경 분석
-- **PR 템플릿 관리**: 다양한 템플릿 제공 및 추천 시스템
-- **인텔리전트 제안**: Claude AI를 활용한 최적 템플릿 추천
+## 🛠️ 기술적 구현 (Action): 핵심 의사결정
 
-#### 모듈 2: GitHub Actions 통합
-- **웹훅 처리**: GitHub 이벤트 실시간 수신 및 처리
-- **CI/CD 자동화**: 빌드 실패/성공 알림 자동화
-- **MCP 프롬프트**: 표준화된 CI/CD 워크플로우 구축
+이 프로젝트는 MCP 개념을 실제 개발 워크플로우에 적용하는 과정에 중점을 둡니다.
 
-#### 모듈 3: Slack 알림 시스템
-- **실시간 알림**: CI/CD 결과를 Slack으로 즉시 전송
-- **포맷된 메시지**: 실패/성공 상황별 맞춤형 메시지 포맷
-- **종단간 통합**: GitHub → MCP → Slack 완전 자동화
+### 1. Unit 2: MCP 기본 개념 학습 및 구현
 
-## 🛠️ 기술 스택
+* **Gradio 기반 MCP 서버/클라이언트**: Gradio의 내장 MCP 지원을 활용하여 신속하게 웹 기반 서버(`mcp-server/app.py`)와 클라이언트(`mcp-client/app.py`)를 구축했습니다. 이를 통해 MCP 통신 흐름과 기본 구조를 학습했습니다.
+  * **Tool**: TextBlob을 이용한 감정 분석 기능을 MCP Tool로 노출.
+* **다양한 클라이언트 연동**: 동일한 Gradio 서버에 HuggingFace.js 기반 웹 클라이언트와 Python 기반 SmolAgents(`mcp-tiny_agent/agent.json`)를 연동하여 MCP의 상호 운용성을 확인했습니다.
+* **Hugging Face Spaces 배포**: 개발된 Gradio 서버를 Spaces에 배포하여 원격 MCP 서버 운영 경험을 쌓았습니다.
 
-### 핵심 프레임워크
-- **Python 3.11+**: 메인 프로그래밍 언어
-- **MCP SDK**: Model Context Protocol 구현
-- **Gradio**: 웹 기반 MCP 서버/클라이언트 인터페이스
+### 2. Unit 3: 실무 워크플로우 자동화 (PR 에이전트)
 
-### 데이터 처리 및 분석
-- **TextBlob**: 자연어 처리 및 감정 분석
-- **Git**: 코드 변경사항 분석
-- **JSON**: 구조화된 데이터 교환
+* **FastMCP 서버 채택**: Unit 3에서는 Gradio 대신 Python 기반의 `FastMCP` 라이브러리를 사용하여 보다 세밀한 제어가 가능한 독립형 MCP 서버를 구축했습니다 (`unit3/.../server.py`).
 
-### 개발 도구 및 배포
-- **uv**: 고성능 Python 패키지 관리자
-- **pytest**: 테스트 프레임워크
-- **Hugging Face Spaces**: 원격 서버 배포
+* **Module 1 (PR 생성 보조)**:
+  * **`analyze_file_changes` Tool**: `subprocess`를 사용하여 `git diff` 명령어를 실행하고, 변경된 파일 목록, 통계, diff 내용을 JSON 형식으로 반환합니다. 대규모 diff 출력을 제어하기 위해 `max_diff_lines` 매개변수를 추가했습니다.
+  * **`get_pr_templates` / `suggest_template` Tools**: 로컬 `templates/` 디렉토리에서 PR 템플릿을 로드하고, 사용자가 제공한 변경 유형(`change_type`)에 기반하여 가장 적합한 템플릿을 추천하는 로직을 구현했습니다. 이는 AI가 판단할 수 있도록 원시 데이터(템플릿 목록, 변경 요약)를 제공하는 MCP 철학을 따릅니다.
 
-### 외부 API 통합
-- **Slack API**: 팀 커뮤니케이션 통합
-- **GitHub API**: 소스 코드 관리 통합
-- **Cloudflare Tunnel**: 로컬 서버 외부 노출
+* **Module 2 (CI/CD 모니터링)**:
+  * **Webhook 처리**: 별도의 `aiohttp` 기반 웹훅 서버(`webhook_server.py`)를 구축하여 GitHub Actions 이벤트를 수신하고, 이를 `github_events.json` 파일에 저장합니다. 이는 MCP 서버와 비동기적으로 작동합니다.
+  * **`get_recent_actions_events` / `get_workflow_status` Tools**: `github_events.json` 파일을 읽어 최근 CI/CD 이벤트나 특정 워크플로우의 최신 상태를 조회하는 기능을 구현했습니다.
+  * **MCP Prompts 도입**: `@mcp.prompt()` 데코레이터를 사용하여 `analyze_ci_results`, `troubleshoot_workflow_failure` 등 표준화된 분석 워크플로우를 정의했습니다. 이는 Claude Code와 같은 클라이언트 AI에게 특정 작업을 수행하도록 지시하는 가이드 역할을 합니다.
 
-### 클라이언트 라이브러리
-- **HuggingFace.js**: JavaScript 기반 MCP 클라이언트
-- **SmolAgents**: Python 기반 에이전트 프레임워크
-- **mcp-remote**: 원격 MCP 서버 연결 도구
+* **Module 3 (팀 커뮤니케이션)**:
+  * **`send_slack_notification` Tool**: `requests` 라이브러리를 사용하여 Slack Incoming Webhook URL (`SLACK_WEBHOOK_URL` 환경 변수)로 메시지를 전송하는 기능을 구현했습니다. Slack 마크다운을 지원합니다.
+  * **서식 Prompts**: `format_ci_failure_alert`, `format_ci_success_summary` 등 Slack 메시지 서식을 정의하는 프롬프트를 추가했습니다. 이는 AI가 CI/CD 결과를 기반으로 일관된 형식의 알림을 생성하도록 유도합니다.
+  * **End-to-End Workflow**: GitHub 이벤트 발생 → Webhook 서버 수신 → MCP 서버의 Tools/Prompts 호출 (Claude Code 경유) → Slack 알림 발송으로 이어지는 완전 자동화 워크플로우를 완성했습니다.
 
-## 📋 전제 조건
+---
+<br>
 
-- Python 3.11 이상
-- [uv 패키지 매니저](https://docs.astral.sh/uv/getting-started/installation/) 설치
-- Git 기본 지식
-- GitHub 계정 및 저장소
-- Slack 워크스페이스 (모듈 3용)
+## 📊 결과 및 성과 (Result)
 
-## 🚀 빠른 시작
+* **MCP 과정 이수**: HuggingFace MCP 과정의 Unit 1(이론), Unit 2(기본 구현), Unit 3(실무 응용) 학습 목표 달성.
+* **실용적 MCP 서버 구현**: 실제 개발 환경에서 유용하게 사용될 수 있는 PR 관리 및 CI/CD 모니터링 자동화 워크플로우를 MCP 서버로 구현했습니다.
+* **Tools와 Prompts 통합**: MCP의 핵심 기능인 Tools(기능 실행)와 Prompts(워크플로우 가이드)를 효과적으로 조합하여 사용하는 방법을 시연했습니다.
+* **테스트 및 문서화**: 각 모듈별 테스트 코드(`test_server.py`)와 수동 테스트 가이드(`manual_test.md`)를 작성하여 코드의 신뢰성과 재현성을 확보했습니다.
 
-### 1. 환경 설정
+---
+<br>
+
+## 💡 주요 학습 포인트 (Learnings)
+
+* **MCP의 가치**: M x N 통합 문제를 해결하고 AI 모델과 외부 시스템 간의 상호 운용성을 높이는 MCP의 중요성을 실제 구현을 통해 이해했습니다.
+* **MCP 서버 설계**: `FastMCP`를 사용하여 Tools와 Prompts를 정의하고, 비동기 처리를 통해 효율적인 서버를 구축하는 방법을 학습했습니다.
+* **AI와의 협업**: 복잡한 로직을 직접 구현하기보다, AI(Claude Code 등)가 판단하고 작업을 수행할 수 있도록 적절한 데이터와 가이드(Prompts)를 제공하는 방식의 유연성과 강력함을 경험했습니다.
+* **워크플로우 자동화**: Webhook, MCP 서버, 외부 API(Slack)를 연동하여 실제 개발 프로세스를 자동화하는 시스템 아키텍처 설계 및 구현 능력을 향상시켰습니다.
+
+---
+<br>
+
+## 🚀 기술 스택
+
+| 구분 | 기술 | 설명 |
+|:-----|:-----|:-----|
+| **MCP** | `mcp-server-python` (`FastMCP`), Gradio MCP | MCP 서버 구현 라이브러리 |
+| **언어** | Python 3.11+ | 메인 프로그래밍 언어 |
+| **웹 프레임워크** | Gradio (Unit 2), `aiohttp` (Unit 3 Webhook) | 웹 인터페이스 및 웹훅 서버 구축 |
+| **패키지 관리** | `uv` | Python 패키지 설치 및 환경 관리 |
+| **테스팅** | `pytest`, `pytest-asyncio` | 단위 및 통합 테스트 |
+| **API 연동** | `requests` (Slack), `subprocess` (Git) | 외부 API 및 로컬 명령어 실행 |
+| **NLP (Unit 2)** | `textblob` | 감정 분석 라이브러리 |
+| **인프라 (선택)** | Hugging Face Spaces (Unit 2 배포), Cloudflare Tunnel (Unit 3 로컬 테스트) | 서버 배포 및 로컬 개발 환경 외부 노출 |
+| **클라이언트** | HuggingFace.js (Unit 2), SmolAgents (Unit 2), Claude Code (Unit 3), `mcp-remote` (원격 서버 프록시) | MCP 서버와 상호작용하는 다양한 클라이언트 |
+
+*기술 스택은 `src/unit3/pyproject.toml`, `src/unit2/.../requirements.txt` 파일에서 확인 가능합니다.*
+
+---
+<br>
+
+## 🚀 시작하기 (Getting Started)
+
+### 전제 조건
+
+* Python 3.11 이상
+* [uv 패키지 매니저](https://docs.astral.sh/uv/getting-started/installation/) 설치
+* Git 기본 지식
+* (Unit 3) GitHub 계정 및 저장소
+* (Unit 3 Module 3) Slack 워크스페이스 및 Incoming Webhook URL
+* (Unit 3) Claude Code (또는 다른 MCP 클라이언트)
+<br>
+
+### 1. 환경 설정 (Unit 3 기준)
 
 ```bash
 # 저장소 클론
-git clone https://github.com/ahfmrptEkd/HuggingFace_MCP.git
+git clone https://github.com/ahfmrptekd/HuggingFace_MCP.git
 cd HuggingFace_MCP/src/unit3
 
-# 의존성 설치
-uv sync
+# 의존성 설치 (개발/테스트 도구 포함)
+uv sync --all-extras
 
-# 가상환경 활성화
+# 가상환경 활성화 (uv sync 시 자동으로 생성됨)
 source .venv/bin/activate
 ```
+<br>
 
-### 2. 프로젝트별 실행
+### 2. 환경 변수 설정 (Unit 3 Module 3)
 
-각 프로젝트는 독립적으로 실행할 수 있습니다:
+`src/unit3/slack-notification/starter/` 디렉토리에 `.env` 파일을 생성하고 Slack Webhook URL을 설정합니다. ([`.env.example`](.env.example) 참조)
 
 ```bash
-# Unit 2: 기본 MCP 구현
-# 1. 감정 분석 서버 (Gradio)
-cd src/unit2/mcp-server
-pip install -r requirements.txt
-python app.py
+# src/unit3/slack-notification/starter/.env
+SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+```
+<br>
 
-# 2. MCP 클라이언트 (Gradio)  
-cd src/unit2/mcp-client
-pip install -r requirements.txt
-python app.py
+### 3. 프로젝트별 실행
 
-# 3. Tiny Agent 실행
-cd src/unit2/mcp-tiny_agent
-npm i mcp-remote
-uv pip install "huggingface_hub[mcp]>=0.32.0"
-tiny-agents run agent.json
+각 모듈의 서버는 독립적으로 실행할 수 있습니다. (Unit 3 기준)
 
-# Unit 3: 실무 워크플로우 구축
-# 모듈 1: 기본 MCP 서버
+```bash
+# Module 1: 기본 MCP 서버
 cd src/unit3/build-mcp-server/starter
-uv sync
 uv run server.py
 
-# 모듈 2: GitHub Actions 통합
+# Module 2: GitHub Actions 통합
 cd src/unit3/github-actions-integration/starter
-uv sync
-python webhook_server.py  # 별도 터미널
+# 터미널 1: Webhook 서버 실행
+python webhook_server.py
+# 터미널 2: MCP 서버 실행
 uv run server.py
+# 터미널 3 (선택): Cloudflare Tunnel 실행 (GitHub Webhook 연동 시)
+# cloudflared tunnel --url http://localhost:8080
 
-# 모듈 3: Slack 알림 시스템
+# Module 3: Slack 알림 시스템
 cd src/unit3/slack-notification/starter
-uv sync
-export SLACK_WEBHOOK_URL="your-webhook-url" or .env 안에 "your-webhook-url" 설정하기
+# 터미널 1: Webhook 서버 실행
+python webhook_server.py
+# 터미널 2: MCP 서버 실행 (SLACK_WEBHOOK_URL 환경 변수 필요)
 uv run server.py
 ```
+<br>
 
-### 3. Claude Code와 연동
+### 4. Claude Code와 연동 (Unit 3 서버)
 
-```bash
-# Unit 3 MCP 서버 등록 (절대 경로 사용)
-claude mcp add [mcp 이름] -- uv --directory /absolute/path/to/src/unit3/build-mcp-server/starter run server.py
+Claude Code 설정에서 MCP 서버를 등록합니다. **`cwd` (Current Working Directory) 경로를 실제 프로젝트 경로로 변경해야 합니다.**
 
-# Unit 2 Gradio 서버 연결 (mcp-remote 사용)
-# 먼저 Gradio 서버 실행 후
-cd src/unit2/mcp-server && python app.py
-
-# 별도 터미널에서 mcp-remote로 연결
-npx mcp-remote http://localhost:7860/gradio_api/mcp/sse
-
-# 등록 확인
-claude mcp list
+```json
+// Claude Code Settings (settings.json)
+{
+  "mcpServers": {
+    "pr-agent-slack": { // MCP 서버 이름 (임의 지정 가능)
+      "command": "uv",
+      "args": ["run", "server.py"],
+      // !!! 아래 cwd 경로를 실제 프로젝트의 Module 3 서버 경로로 수정하세요 !!!
+      "cwd": "/absolute/path/to/HuggingFace_MCP/src/unit3/slack-notification/starter"
+    }
+  }
+}
 ```
 
-## 🧪 테스트 실행
+Claude Code를 재시작하면 서버가 연결됩니다.
 
-### Unit 2: 기본 MCP 구현 테스트
+---
+<br>
+
+## 🧪 테스트 실행 (Unit 3 기준)
+
+각 모듈 디렉토리 내에서 `pytest`를 사용하여 테스트를 실행할 수 있습니다.
+
 ```bash
-# Gradio 서버 테스트 (브라우저에서 수동 테스트)
-cd src/unit2/mcp-server
-python app.py
-# http://localhost:7860 에서 감정 분석 테스트
-
-# Tiny Agent 테스트
-cd src/unit2/mcp-tiny_agent
-tiny-agents run agent.json
-# "Analyze the sentiment of 'I love programming!'" 입력하여 테스트
-```
-
-### Unit 3: 실무 워크플로우 테스트
-```bash
-# 전체 테스트 실행
-cd src/unit3
+# 특정 모듈의 테스트 실행 (예: Module 3)
+cd src/unit3/slack-notification/starter
 uv run pytest test_server.py -v
-
-# 특정 모듈 테스트
-cd src/unit3/slack-notification/starter
-uv run pytest test_server.py::test_send_slack_notification -v
-
-# MCP 서버 연결 테스트
-cd src/unit3/build-mcp-server/starter
-uv run pytest test_server.py::test_analyze_file_changes -v
 ```
 
-## 📖 학습 과정
+수동 테스트 및 End-to-End 테스트는 각 모듈의 `manual_test.md` 파일을 참조하세요.
 
-### 📚 이론 학습 과정 (docs/)
+---
+<br>
 
-#### Unit 1: MCP 기본 개념 
-- MCP 정의 및 "AI를 위한 USB-C" 개념 이해
-- M×N 통합 문제와 MCP의 해결책
-- 핵심 용어 및 프로토콜 구조 학습
+## 📁 프로젝트 구조
 
-#### Unit 2: Gradio 기반 구현 이론   
-- Gradio를 활용한 MCP 서버/클라이언트 아키텍처
-- TextBlob 기반 감정 분석 도구 설계
-- Hugging Face Spaces 배포 전략
+```
+├── README.md
+├── src/
+│   ├── unit2/                           # MCP 기본 개념 학습
+│   │   ├── mcp-server/                  # Gradio 기반 MCP 서버
+│   │   ├── mcp-client/                  # Gradio 기반 MCP 클라이언트
+│   │   └── mcp-tiny_agent/              # SmolAgents 클라이언트
+│   └── unit3/                           # 실무 워크플로우 구현
+│       ├── build-mcp-server/            # Module 1: PR 템플릿 추천
+│       │   └── starter/
+│       │       ├── server.py
+│       │       └── templates/
+│       ├── github-actions-integration/  # Module 2: CI/CD 모니터링
+│       │   └── starter/
+│       │       ├── server.py
+│       │       └── webhook_server.py
+│       └── slack-notification/          # Module 3: Slack 알림
+│           └── starter/
+│               ├── server.py
+│               ├── webhook_server.py
+│               └── test_server.py
+└── docs/                                # 문서 및 가이드
+```
 
-#### Unit 3: 실무 워크플로우 가이드
-- Claude Code 연동 및 PR Agent 개념
-- GitHub Actions 통합 패턴
-- 실제 팀 환경에서의 MCP 활용법
-
-### 🛠️ 실습 학습 과정 (src/)
-
-#### 단계 1: 기본 MCP 구현 (Unit 2)
-- Gradio 기반 감정 분석 MCP 서버 구축
-- HuggingFace.js와 SmolAgents 클라이언트 연동
-- 원격 서버 배포 및 다중 클라이언트 테스트
-
-#### 단계 2: MCP 기본 개념 실습 (Unit 3 모듈 1)
-- MCP 프로토콜의 핵심 원리 구현
-- 도구(Tools)와 프롬프트(Prompts) 개발
-- Claude Code와의 통합 패턴
-
-#### 단계 3: 실무 통합 패턴 (Unit 3 모듈 2)
-- GitHub Actions와의 연동 방법 (<u>*임시 url 매번 github에서 변경 필요*</u>)
-- 웹훅 처리 및 이벤트 기반 아키텍처
-- CI/CD 자동화 워크플로우 구축
-
-#### 단계 4: 종단간 자동화 (Unit 3 모듈 3)
-- Slack 통합을 통한 완전 자동화
-- 실제 팀 워크플로우에 적용
-- 프로덕션 레벨 MCP 서버 완성
-
-## 🤝 기여 가이드라인
-
-이 프로젝트는 학습 목적으로 제작되었습니다. 기여를 원하시면:
-
-1. 이슈를 먼저 등록해 주세요
-2. 포크 후 기능 브랜치를 생성하세요
-3. 코딩 표준을 준수해 주세요 (`team-guidelines/coding-standards.md` 참조)
-4. PR 가이드라인을 따라주세요 (`team-guidelines/pr-guidelines.md` 참조)
+---
+<br>
 
 ## 📄 라이선스
 
@@ -306,39 +260,8 @@ uv run pytest test_server.py::test_analyze_file_changes -v
   note = {GitHub repository - Unit 3 Implementation},
 }
 ```
-
-**원본 코스**: [HuggingFace MCP Course](https://github.com/huggingface/mcp-course)
-
-## 🆘 문제 해결
-
-### 자주 발생하는 문제
-
-1. **MCP 서버 연결 실패**
-   ```bash
-   # 포트 충돌 확인
-   lsof -i :8080
-   ```
-
-2. **Slack 웹훅 오류**
-   ```bash
-   # 환경변수 확인
-   echo $SLACK_WEBHOOK_URL
-   ```
-
-3. **GitHub 웹훅 수신 실패**
-   ```bash
-   # Cloudflare 터널 상태 확인
-   cloudflared tunnel --url http://localhost:8080
-   ```
-
-### 지원
-
-- 📧 이슈 등록: [GitHub Issues](https://github.com/ahfmrptEkd/HuggingFace_MCP/issues)
-- 💬 토론: [GitHub Discussions](https://github.com/ahfmrptEkd/HuggingFace_MCP/discussions)
-- 📖 원본 과정: [HuggingFace MCP Course](https://github.com/huggingface/mcp-course)
-
 ---
 
-⭐ **이 프로젝트가 도움이 되셨다면 스타를 눌러주세요!** ⭐
+## 🙏 감사의 말
 
-*MCP를 활용한 AI 기반 개발 워크플로우의 새로운 패러다임을 경험해보세요.*
+이 프로젝트는 HuggingFace 팀이 제공한 훌륭한 [MCP Course](https://github.com/huggingface/mcp-course)를 기반으로 합니다.
